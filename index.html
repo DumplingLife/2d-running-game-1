@@ -221,8 +221,7 @@
             $(".death-overlay").hide();
             $(".pause-overlay").hide();
 
-            let renderCounter = 0;
-            const intervalLoopsPerRender = 5;
+            let intervalCounter = 0;
 
             let player;
             const gravity = 0.2;
@@ -302,16 +301,18 @@
             }
 
             let interval;
+            let renderInterval;
             let paused = true;
             function togglePause() {
                 if(!paused) {
                     clearInterval(interval);
+                    clearInterval(renderInterval);
                     paused = true;
                     $(".pause-overlay").show();
                     $(".music").get(0).pause();
                 }
                 else {
-                    startInterval();
+                    startIntervals();
                     paused = false;
                     $(".start-overlay").hide();
                     $(".death-overlay").hide();
@@ -319,7 +320,7 @@
                     $(".music").get(0).play();
                 }
             }
-            function startInterval() {
+            function startIntervals() {
                 let prevDate = Date.now();
                 interval = setInterval(() => {
                     //update player
@@ -383,15 +384,15 @@
                     //update background
                     backgroundX -= backgroundVX;
 
-                    renderCounter++;
-                    if(renderCounter % intervalLoopsPerRender == 0) render();
-
-                    if(renderCounter % 100 == 0) {
+                    if(intervalCounter % 100 == 0) {
                         console.log(Date.now() - prevDate);
                         prevDate = Date.now();
                     }
-                    console.log(renderCounter);
+                    intervalCounter++;
                 },10);
+                renderInterval = setInterval(() => {
+                    render();
+                }, 30);
             }
 
             function createItem() {
