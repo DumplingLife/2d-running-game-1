@@ -266,7 +266,20 @@
                 }
             });
             $(document).on("mousedown", () => {
-                //do same thing as pressing w
+                //unpause
+                if(paused) {
+                    //unpause
+                    togglePause();
+                }
+                //jump
+                if(!player.jumping) {
+                    player.vy = jumpInitialVY;
+                    player.jumping = true;
+                    $(".player-frame").hide();
+                    $(".player-frame-jump").show();
+                }
+            });
+            $(document).on("touchstart", () => {
                 //unpause
                 if(paused) {
                     //unpause
@@ -294,7 +307,7 @@
                 }
 
                 //background
-                //$(".background").css("left", backgroundX);
+                $(".background").css("left", backgroundX);
 
                 //points
                 $(".points").html(points);
@@ -323,6 +336,7 @@
             function startIntervals() {
                 let prevDate = Date.now();
                 interval = setInterval(() => {
+                    let start = performance.now();
                     //update player
                     if(player.boost >= 0) {
                         player.boost--;
@@ -336,6 +350,7 @@
                     if(player.y < 0) {
                         player.y = 0;
                         player.jumping = false;
+                        player.vy = 0;
                         $(".player-frame").hide();
                         $(`.player-frame-${Math.floor(player.frameCounter/playerFrameBreakpoint)}`).show();
                     }
@@ -389,9 +404,12 @@
                         prevDate = Date.now();
                     }
                     intervalCounter++;
+                    console.log(performance.now() - start);
                 },10);
                 renderInterval = setInterval(() => {
+                    let start = performance.now();
                     render();
+                    console.log("render: " + (performance.now() - start));
                 }, 30);
             }
 
